@@ -28,10 +28,10 @@ spring:
     validate-on-migrate: true
 
   kafka:
-    bootstrap-servers: redpanda.messaging.svc.cluster.local:9093
+    bootstrap-servers: kafka.kafka-dev.svc.cluster.local:9093
 
     properties:
-      schema.registry.url: http://redpanda.messaging.svc.cluster.local:8081
+      schema.registry.url: http://kafka.kafka-dev.svc.cluster.local:8081
 
 app:
   kafka:

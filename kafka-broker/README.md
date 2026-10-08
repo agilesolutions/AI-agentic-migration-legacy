@@ -13,6 +13,8 @@ kubectl create namespace kafka-dev
 
 # 4. Install the chart using your custom yaml configuration overrides
 helm install local-kafka redpanda/redpanda --namespace kafka-dev -f redpanda-local.yaml
+helm upgrade local-kafka redpanda/redpanda -n kafka-dev --reuse-values -f redpanda-local.yaml
+
 
 # 5. Check the status of the deployment
 kubectl -n kafka-dev rollout status statefulset kafka -w

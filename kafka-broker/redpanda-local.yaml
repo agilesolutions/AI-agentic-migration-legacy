@@ -38,3 +38,9 @@ storage:
 
 post_install_job:
   enabled: false
+
+listeners:
+  kafka:
+    tls:
+      enabled: false
+
