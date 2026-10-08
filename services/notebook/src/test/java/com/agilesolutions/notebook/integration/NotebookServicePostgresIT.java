@@ -1,0 +1,53 @@
+package com.agilesolutions.notebook.integration;
+
+import com.agilesolutions.notebook.api.model.CreateNotebookRequest;
+import com.agilesolutions.notebook.api.model.Notebook;
+import com.agilesolutions.notebook.service.NotebookService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@Testcontainers
+@Tag("integration")
+class NotebookServicePostgresIT {
+
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
+            .withDatabaseName("test")
+            .withUsername("test")
+            .withPassword("test");
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+        registry.add("spring.flyway.enabled", () -> "true");
+    }
+
+    @Autowired
+    NotebookService notebookService;
+
+    @Test
+    void createAndFind_persistsWithMigrations() {
+        CreateNotebookRequest request = new CreateNotebookRequest();
+        request.setTitle("IT-Note");
+        request.setDescription("integration");
+
+        Notebook created = notebookService.createNotebook(request);
+        assertThat(created.getId()).isNotNull();
+
+        Notebook found = notebookService.getNotebookById(created.getId());
+        assertThat(found.getTitle()).isEqualTo("IT-Note");
+    }
+}

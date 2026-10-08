@@ -1,0 +1,8 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: notification
+  namespace: flux-system
+spec:
+  image: agilesolutions/notification
+  interval: 5m

@@ -1,0 +1,258 @@
+# Copilot Agents en Skills om Overheid transitie te ondersteunen
+Diverse organisaties zijn momenteel druk bezig met het faceliften van legacy applicaties naar de laatste stand van technology (JDK, Spring framework en boot) en de move 
+van bare-metal RHEL VMs naar Kubernetet. Het lijkt het mij wenselijk het proces te versnellen door het inzetten van AI assisted software engineering ([Intellij Copilot](https://dev.to/eddybenchek/what-i-learned-building-with-github-copilot-as-a-java-developer-9bk)).
+Dit versnelt niet alleen het proces maar verbetert ook de kwaliteit van het eind product. Dit project bevat custom AI Copilot Agents en Skills ter ondersteuning van [Modernisering Legacy Systemen](#modernisering-legacy-systemen)
+
+## Verwarring omtrent de move naar Azure in relatie tot NIS2 richtlijnen
+
+[NIS2-richtlijn](https://stackit.com/en/learn/knowledge/nis2) (in Nederland de Cyberbeveiligingswet) is op 15 augustus 2026 officieel in werking getreden. Deze wetgeving is relevanter dan ooit omdat de cybersecurity de keuze tussen US scalers en EU gehoste cloud providers niet langer een vrijblijvende IT-keuze is, maar een wettelijke bestuursverantwoordelijkheid met zware sancties.
+De relatie met soevereine clouds zoals [STACKIT](https://coding.agency/kennisbank/kpn-stackit-soevereine-cloud-nederland#waarom-de-overheid-niet-meer-alleen-op-aws-en-azure-wil-leunen) is direct en cruciaal: NIS2 dwingt organisaties om grip te krijgen op hun digitale toeleveringsketen, en een soevereine cloud biedt daarvoor het juridische en technische fundament.
+
+Ik begrijp dan ook niet waarom men geld en energie investeert in het verhuizen van bare-metal VM gehoste oplossingen naar Azure AKS.
+
+**Note:** Lees het recentelijke NDD publicatie NDD [Mijlpaal Doorbraakproject: "Het Fundament" (De Soevereine Cloud)](https://www.digitaleoverheid.nl/nieuws-nds/nds-cloud-mijlpaal-publicatie-van-het-ontwerp/)
+
+## Huidige juridische status in Nederland (Cyberbeveiligingswet)
+
+De Europese NIS2-richtlijn (deadline oktober 2024) zijn in Nederland officieel omgezet in nationale wetgeving via de Cyberbeveiligingswet (Cbw). 
+Na goedkeuring door de Tweede en Eerste Kamer is deze wet op 15 augustus 2026 officieel in werking getreden, zonder overgangsperiode.
+Sinds die datum moeten ruim 8.000 organisaties in Nederland – waaronder **overheidsinstanties** – wettelijk voldoen aan strenge zorg- en meldplichten.
+Grote Amerikaanse cloudaanbieders (waaronder MicroSoft met Azure) vallen onder de Amerikaanse CLOUD Act, waarmee de Amerikaanse overheid in theorie data kan opvorderen. Binnen de NIS2-kaders en de vernieuwde Baseline Informatiebeveiliging Overheid vormt dit een direct compliance-risico voor gevoelige data.
+
+De overheid gebruikt de implementatie van NIS2 dus als het fundament om te eisen dat vitale overheidsapplicaties uitsluitend nog draaien op infrastructuren die volledig immuun zijn voor extraterritoriale claims.
+
+## Modernisering Legacy Systemen
+
+Migratie werk kan bestaan uit de volgende onderdelen:
+- Een verouderde java applicatie met java versie 8 moet vernieuwd worden naar de laatste lts-versie;
+- De gehele OTAP draait op een of meer RHEL-servers in de kelder van het hoofdgebouw van de klant en moet naar Azure (AKS) worden gebracht;
+- Men twijfelt nog over de inzet van OpenShift;
+- De CI/CD is een Jenkins pipeline en die moet naar Azure pipelines worden omgezet;
+- Een nieuw framework worden geselecteerd zoals bijvoorbeeld Spring of Quarkus;
+- De bestaande unit en integration tests zinvol maken.
+
+## Copilot Architectuur Agents
+Ik heb gekozen om niet één generieke “migration agent” te maken, maar een orchestrator-agent met gespecialiseerde migration skills/instructions. Dat sluit heel goed aan bij de problematiek van het migreren van legacy applicaties en de move van bare metal RHEL VMs naar Kubernetes cloud: Java 8 → actuele LTS, RHEL/on-prem → Azure/AKS, OpenShift-evaluatie, Jenkins → Azure Pipelines, frameworkselectie en het verbeteren van unit/integration tests.
+```
+                         ┌──────────────────────────┐
+                         │ java-migration-orchestrator│
+                         │          agent            │
+                         └────────────┬─────────────┘
+                                      │
+              ┌───────────────────────┼───────────────────────┐
+              │                       │                       │
+              ▼                       ▼                       ▼
+     ┌────────────────┐      ┌────────────────┐      ┌────────────────┐
+     │ Java Migration │      │ Cloud / K8s    │      │ CI/CD Migration│
+     │     Skill      │      │     Skill      │      │     Skill      │
+     └────────────────┘      └────────────────┘      └────────────────┘
+              │                       │                       │
+       Java 8 → LTS             RHEL → AKS             Jenkins → Azure
+       Spring upgrade            OpenShift               Pipelines
+       dependencies             Docker/Jib               quality gates
+       deprecated APIs           Helm                     artifacts
+       
+              ┌───────────────────────┼───────────────────────┐
+              │                       │                       │
+              ▼                       ▼                       ▼
+     ┌────────────────┐      ┌────────────────┐      ┌────────────────┐
+     │ Test Migration │      │ Framework      │      │ Modernization  │
+     │     Skill      │      │ Evaluation     │      │     Review     │
+     └────────────────┘      └────────────────┘      └────────────────┘
+              │                       │                       │
+       JUnit 5                  Spring vs Quarkus       architecture
+       integration              criteria                 security
+       Testcontainers            PoC                      observability
+       test quality              ADR                      twelve-factor
+```
+De werkzaamheden kunnen bestaan uit Java 8 naar de laatste LTS, RHEL naar Azure AKS, OpenShift, Jenkins naar Azure Pipelines, frameworkselectie en het verbeteren van unit- en integration-tests.
+
+## 10 concrete use-case prompts
+Zie prompts onder directory [.github/prompts](.github/prompts/README.md). Deze prompts zijn bedoeld om de migration agent te instrueren en te begeleiden bij het uitvoeren van de migratie. De prompts zijn als volgt:
+1. Analyseer de bestaande Jenkins pipeline en maak een mapping naar Azure DevOps.
+2. Ontwerp een `azure-pipelines.yml` met minimaal checkout, build, unit tests
+3. Ontwerp een `azure-pipelines.yml` met minimaal checkout, build, unit tests, integration tests, package, Jib/container build, quality/security checks, push naar ACR, deployment naar AKS en smoke/health validation.
+4. Maak een migration checklist voor Jenkins → Azure Pipelines.
+5. Analyseer de bestaande Java 8 applicatie en maak een plan voor upgrade naar de laatste LTS-versie van Java.
+6. Evalueer de huidige RHEL-servers en maak een plan voor migratie naar Azure AKS.
+7. Onderzoek de mogelijkheid om OpenShift te gebruiken en maak een aanbeveling.
+8. Analyseer de bestaande unit- en integration-tests en maak een plan om deze te verbeteren en te moderniseren.
+9. Evalueer de huidige framework en maak een aanbeveling voor een nieuw framework zoals Spring of Quarkus.
+10. Ontwerp een plan voor het verbeteren van de architectuur, security, observability en het implementeren van twelve-factor app principes.
+
+Alle prompts volgen de volgende strategie:
+
+Assess → Baseline → Plan → Execute → Test → Deploy → Validate → Report
+
+## Use Case on this mono repos
+This repository contains a sample Spring Boot 4 application that is used to demonstrate the migration process from a legacy Java 8 application to a modern Spring Boot 4 application. The application is deployed on Kubernetes using FluxCD for GitOps deployment. The application is also instrumented with OpenTelemetry for observability and monitoring using Grafana, Prometheus, Loki, and Tempo.    
+The application is also configured to send events over Redpanda as Kafka broker to demonstrate event-driven architecture. it demonstrates fan-out through independent consumer groups, Avro/Schema Registry, an independently deployable consumer, at-least-once processing, idempotency via event_id, and persistent audit history.
+```
+                         ┌──────────────────────┐
+                         │   Notebook Service    │
+                         │       Producer        │
+                         └──────────┬───────────┘
+                                    │
+                                    │ NotebookCreated
+                                    ▼
+                         ┌──────────────────────┐
+                         │      Redpanda        │
+                         │  notebook.events     │
+                         └──────────┬───────────┘
+                                    │
+                    ┌───────────────┴────────────────┐
+                    │                                │
+             group: notification              group: audit
+                    │                                │
+                    ▼                                ▼
+          ┌─────────────────┐              ┌─────────────────┐
+          │ notification-   │              │ audit-service   │
+          │ service         │              │                 │
+          │                 │              │ consume event   │
+          │ notification    │              │ audit event     │
+          └─────────────────┘              └────────┬────────┘
+                                                    │
+                                                    ▼
+                                               Audit store
+```
+
+## Terraform provision LGTM grafana stack, PostgreSQL database, traefik ingress controller
+
+```
+cd terraform/environment/grafana
+
+terraform init
+
+terraform validate
+
+terraform plan
+
+terraform apply -auto-approve
+```
+
+## Build, bootstrap FluxCD and GitOps deploy notebook application
+
+```
+gradlew jibDockerBuild
+
+flux bootstrap github --owner=agilesolutions --repository=AI-agentic-migration-overheid --branch=master --path=./fluxcd --components-extra=image-reflector-controller,image-automation-controller --personal
+```
+
+## Run and Test
+
+```
+kubectl port-forward svc/notebook 8080:8080 -n services
+
+
+http://localhost:8080/swagger-ui.html
+```
+
+
+## Grafana observe
+
+```
+kubectl port-forward svc/kube-prometheus-stack-grafana  3000:80 -n monitoring
+
+
+http://localhost:3000
+
+```
+
+## Grafana alerts
+The Loki query for the alert is:
+
+```
+sum(
+count_over_time(
+{namespace="notebook"} |= "ERROR" [5m]
+)
+) > 0
+
+```
+This means that if there are any log entries in the last 5 minutes that contain the string "ERROR" in the "notebook" namespace, the alert will fire.
+
+```
+kubectl port-forward svc/grafana-webhook 8080:8080 -n monitoring
+
+kubectl logs -n monitoring deployment/grafana-webhook -f
+```
+The logs will show the alerts received from Grafana and the actions taken by the webhook.
+
+You will see something like this in the logs:
+
+```
+{
+  "receiver": "local-webhook",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "NotebookErrorLogs",
+        "namespace": "notebook"
+      },
+      "annotations": {
+        "summary": "Notebook application error"
+      }
+    }
+  ]
+}
+```
+
+## Enabling Grafana Service Graph
+Tempo is a distributed tracing backend that can be used to visualize service graphs in Grafana. To enable service graphs, you need to configure Tempo to receive traces from your application and then configure Grafana to display the service graph.
+
+```
+                    OTLP
+Notebook ─────────────────────► Tempo
+   │                              │
+   │                              │ service-graphs
+   │                              ▼
+   │                         Metrics Generator
+   │                              │
+   │                              │ remote_write
+   │                              ▼
+   │                         Prometheus
+   │                              │
+   │                              ▼
+   └──────────────────────────► Grafana
+                                  │
+                                  ▼
+                            Service Graph
+```
+
+## Observability met SpringBoot 4 OTEL en Grafana Alloy collector
+
+```
+Spring Boot 4 application
+        │
+        │ OTLP/gRPC or OTLP/HTTP
+        ▼
+┌──────────────────────┐
+│    Grafana Alloy     │
+│                      │
+│ OTLP receiver        │
+│   ├── traces         │
+│   ├── metrics        │
+│   └── logs           │
+└──────────┬───────────┘
+           │
+           ├── traces ──► Tempo
+           ├── metrics ─► Prometheus/Mimir
+           └── logs ────► Loki
+```
+
+### Grafana dashboard drilldown
+
+```
+kubectl port-forward svc/kube-prometheus-stack-grafana  3000:80 -n monitoring
+```
+
+## GITOPS - manage applicaties met FluxCD.
+[Central idea is to show how to use GitOps](docs/gitops-strategie.md) (FluxCD) to manage the deployment of a microservices application on Kubernetes.
+1. How to bootstrap FluxCD in your Kubernetes cluster:
+```
+flux bootstrap github --owner=agilesolutions --repository=AI-agentic-migration-overheid --branch=master --path=./fluxcd --components-extra=image-reflector-controller,image-automation-controller --personal
+```
+Read full instructions in [docus/fluxcd.md](docs/fluxcd.md)
+

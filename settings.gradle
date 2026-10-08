@@ -1,0 +1,10 @@
+rootProject.name = 'notebook'
+include ':notebook-service'
+project(':notebook-service').projectDir = new File(settingsDir, 'services/notebook')
+include ':notification-service'
+project(':notification-service').projectDir = new File(settingsDir, 'services/notification')
+include ':audit-service'
+project(':audit-service').projectDir = new File(settingsDir, 'services/audit')
+include ':common'
+project(':common').projectDir = new File(settingsDir, 'services/common')
+

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: notebook
+description: Notebook service for the application
+type: application
+version: 1.0.15
+appVersion: "1.0.0"

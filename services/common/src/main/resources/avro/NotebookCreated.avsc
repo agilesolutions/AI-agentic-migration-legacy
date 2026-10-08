@@ -1,0 +1,44 @@
+{
+  "type": "record",
+  "name": "NotebookCreated",
+  "namespace": "com.agilesolutions.common.events",
+  "doc": "Published when a notebook is created.",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique identifier of this event."
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "default": "NotebookCreated"
+    },
+    {
+      "name": "eventVersion",
+      "type": "int",
+      "default": 1
+    },
+    {
+      "name": "occurredAt",
+      "type": "string",
+      "doc": "UTC timestamp when the event occurred."
+    },
+    {
+      "name": "notebookId",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "description",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    }
+  ]
+}

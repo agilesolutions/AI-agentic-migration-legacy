@@ -1,0 +1,8 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: audit
+  namespace: flux-system
+spec:
+  image: agilesolutions/audit
+  interval: 5m

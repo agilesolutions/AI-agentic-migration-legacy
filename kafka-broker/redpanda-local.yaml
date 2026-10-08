@@ -1,0 +1,40 @@
+# redpanda-local.yaml
+fullnameOverride: "kafka"
+
+# 1. Main Broker settings (Forces Docker Hub mirror directly)
+image:
+  repository: "docker.io/redpandadata/redpanda"
+
+statefulset:
+  replicas: 1
+  # Explicitly direct the helper init-containers to avoid proxy domains
+  initContainerImage:
+    repository: "docker.io/redpandadata/redpanda"
+  sideCars:
+    image:
+      repository: "docker.io/redpandadata/redpanda-operator"
+
+# 2. Subchart Console settings (Overrides its local localized defaults)
+console:
+  enabled: true
+  image:
+    registry: "docker.io"
+    repository: "redpandadata/console"
+  service:
+    type: NodePort
+
+# 3. Tight local computing allocations
+resources:
+  cpu:
+    cores: "1"
+  memory:
+    container:
+      max: "2.5Gi"
+
+storage:
+  persistentVolume:
+    enabled: true
+    size: "10Gi"
+
+post_install_job:
+  enabled: false

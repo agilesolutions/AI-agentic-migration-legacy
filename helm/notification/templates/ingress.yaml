@@ -1,0 +1,29 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "notification.fullname" . }}
+  namespace: {{ .Values.namespace.name }}
+  annotations:
+    # cert-manager creates the TLS certificate
+    # cert-manager.io/cluster-issuer: { { .Values.ingress.clusterIssuer } }
+    # ExternalDNS creates the DNS record in STACKIT DNS
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.ingress.host }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: notification
+                port:
+                  number: {{ .Values.service.port }}
+  tls:
+    - secretName: notification-tls
+      hosts:
+        - {{ .Values.ingress.host }}
+  {{- end }}

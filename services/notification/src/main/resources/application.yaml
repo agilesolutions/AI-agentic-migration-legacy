@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: notification-service
+
+  kafka:
+    bootstrap-servers: redpanda.messaging.svc.cluster.local:9093
+
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+
+      properties:
+        schema.registry.url: http://redpanda.messaging.svc.cluster.local:8081
+        specific.avro.reader: true
+
+    listener:
+      ack-mode: record
+
+app:
+  kafka:
+    topics:
+      notebook-events: notebook.events
+
+logging:
+  level:
+    com.agilesolutions.notification: INFO
+    org.apache.kafka: WARN

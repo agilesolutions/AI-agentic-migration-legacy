@@ -1,0 +1,26 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: notebook
+  namespace: notebook
+spec:
+  interval: 1m
+  install:
+    createNamespace: true
+  chart:
+    spec:
+      chart: ./helm/notebook
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  values:
+    image:
+      repository: agilesolutions/notebook
+      tag: 1.0.15
+    service:
+      port: 8080
+    ingress:
+      enabled: true
+      className: traefik
+      host: notebook.local
