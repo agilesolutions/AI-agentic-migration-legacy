@@ -43,4 +43,8 @@ listeners:
   kafka:
     tls:
       enabled: false
+  schemaRegistry:
+    tls:
+      enabled: false
+
 

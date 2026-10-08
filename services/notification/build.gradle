@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'com.agilesolutions.notebook'
-version = '1.0.0'
+version = '1.0.4'
 
 java {
 	toolchain {
@@ -28,6 +28,7 @@ repositories {
 	maven { url = 'https://repo.spring.io/milestone' }
 	maven { url = 'https://repo.spring.io/snapshot' }
 	maven { url = uri("https://repo.embabel.com/artifactory/libs-snapshot") }
+	maven {url "https://packages.confluent.io/maven/"}
 }
 
 dependencies {
@@ -36,6 +37,7 @@ dependencies {
 	implementation libs.spring.data.validation
 	implementation libs.spring.kafka
 	implementation libs.avro
+	implementation libs.kafka.avro.serializer
 	implementation libs.lombok
 	annotationProcessor libs.lombok
 
