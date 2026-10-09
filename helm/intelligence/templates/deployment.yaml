@@ -39,12 +39,12 @@ spec:
             - configMapRef:
                 name: {{ include "intelligence.fullname" . }}
           env:
-            - name: SPRING_DATASOURCE_USERNAME
+            - name: MONGODB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.database.secret.name }}
                   key: username
-            - name: SPRING_DATASOURCE_PASSWORD
+            - name: MONGODB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.database.secret.name }}

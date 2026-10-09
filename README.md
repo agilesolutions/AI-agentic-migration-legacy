@@ -152,7 +152,7 @@ http://localhost:8080/swagger-ui.html
 ``` 
 kubectl get pods -n database
 
-kubectl port-forward pod/YOUR_POD_NAME 27017:27017
+kubectl port-forward svc/mongodb 27017:27017 -n database
 
 # connect to MongoDB Compass with the following connection string:
 mongodb://localhost:27017

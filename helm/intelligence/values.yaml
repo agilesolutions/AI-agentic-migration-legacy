@@ -17,7 +17,8 @@ image:
 
 
 database:
-  uri: jdbc:postgresql://notebook-postgresql.database.svc.cluster.local:5432/notebook
+  host: mongodb.database.svc.cluster.local
+  database: notebook_intelligence
   secret:
     create: true
     name: audit-db

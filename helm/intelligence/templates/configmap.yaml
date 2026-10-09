@@ -5,7 +5,8 @@ metadata:
   namespace: {{ .Values.namespace.name }}
 data:
   SPRING_PROFILES_ACTIVE: {{ .Values.config.SPRING_PROFILES_ACTIVE | quote }}
-  MONGODB_URI: { { .Values.database.uri | quote } }
+  MONGODB_HOST: { { .Values.database.host | quote } }
+  MONGODB_DATABASE: { { .Values.database.database | quote } }
   KAFKA_BOOTSTRAP_SERVERS: { { .Values.config.bootstrapServers | quote } }
   KAFKA_SCHEMA_REGISTRY_URL: { { .Values.config.schemaRegistryUrl | quote } }
   LOG_LEVEL: {{ .Values.config.LOG_LEVEL | quote }}

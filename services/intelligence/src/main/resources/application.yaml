@@ -4,7 +4,7 @@ spring:
 
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/notebook_intelligence}
+      uri: mongodb://$MONGODB_USERNAME:$MONGODB_PASSWORD@${MONGODB_HOST:localhost}:27017/${MONGODB_DATABASE:notebook_intelligence}
       auto-index-creation: true
 
   kafka:

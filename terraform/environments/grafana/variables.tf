@@ -44,3 +44,15 @@ variable "prometheus_service_url" {
 
   default = null
 }
+
+variable "mongodb_root_password" {
+  description = "MongoDB root password"
+  type        = string
+  sensitive   = true
+}
+
+variable "mongodb_password" {
+  description = "MongoDB user password"
+  type        = string
+  sensitive   = true
+}
