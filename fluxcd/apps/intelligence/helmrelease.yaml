@@ -1,26 +1,26 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: audit
-  namespace: audit
+  name: intelligence
+  namespace: intelligence
 spec:
   interval: 1m
   install:
     createNamespace: true
   chart:
     spec:
-      chart: ./helm/audit
+      chart: ./helm/intelligence
       sourceRef:
         kind: GitRepository
         name: flux-system
         namespace: flux-system
   values:
     image:
-      repository: agilesolutions/audit
-      tag: 1.0.15
+      repository: agilesolutions/intelligence
+      tag: 1.0.0
     service:
       port: 8080
     ingress:
       enabled: true
       className: traefik
-      host: audit.local
+      host: intelligence.local

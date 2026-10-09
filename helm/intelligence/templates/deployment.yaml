@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "audit.fullname" . }}
+  name: {{ include "intelligence.fullname" . }}
   namespace: {{ .Values.namespace.name }}
   labels:
-    app.kubernetes.io/name: {{ include "audit.fullname" . }}
+    app.kubernetes.io/name: {{ include "intelligence.fullname" . }}
     app.kubernetes.io/component: frontend
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "audit.fullname" . }}
+      app.kubernetes.io/name: {{ include "intelligence.fullname" . }}
       app.kubernetes.io/component: frontend
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "audit.fullname" . }}
+        app.kubernetes.io/name: {{ include "intelligence.fullname" . }}
         app.kubernetes.io/component: frontend
     spec:
-      serviceAccountName: {{ include "audit.serviceAccountName" . }}
+      serviceAccountName: {{ include "intelligence.serviceAccountName" . }}
       imagePullSecrets:
         - name: {{ .Values.imagePullSecrets.name }}
       topologySpreadConstraints:
@@ -27,17 +27,17 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              app.kubernetes.io/name: {{ include "audit.fullname" . }}
+              app.kubernetes.io/name: {{ include "intelligence.fullname" . }}
               app.kubernetes.io/component: frontend
       containers:
-        - name: {{ include "audit.fullname" . }}
+        - name: {{ include "intelligence.fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: {{ include "audit.fullname" . }}
+                name: {{ include "intelligence.fullname" . }}
           env:
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:

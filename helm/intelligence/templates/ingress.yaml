@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "audit.fullname" . }}
+  name: {{ include "intelligence.fullname" . }}
   namespace: {{ .Values.namespace.name }}
   annotations:
     # cert-manager creates the TLS certificate
@@ -19,11 +19,11 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: audit
+                name: intelligence
                 port:
                   number: {{ .Values.service.port }}
   tls:
-    - secretName: audit-tls
+    - secretName: intelligence-tls
       hosts:
         - {{ .Values.ingress.host }}
   {{- end }}

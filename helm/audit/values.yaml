@@ -15,20 +15,17 @@ image:
   tag: 1.0.9
   pullPolicy: IfNotPresent
 
-imagePullSecrets:
-  name: dockerhub-secret
-  create: true
-  registry: https://index.docker.io/v1/
-  username: "agilesolutions"
-  password: ""
-  email: "robert.rong@agile-solutions.ch"
-
 database:
+  uri: jdbc:postgresql://notebook-postgresql.database.svc.cluster.local:5432/notebook
   secret:
     create: true
     name: audit-db
     username: notebook
     password: notebook
+
+kafka:
+  bootstrapServers: kafka.kafka-dev.svc.cluster.local:9093
+  schemaRegistryUrl: http://kafka.kafka-dev.svc.cluster.local:8081
 
 app:
   enabled: true

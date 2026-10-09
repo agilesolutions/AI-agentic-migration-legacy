@@ -5,6 +5,9 @@ metadata:
   namespace: {{ .Values.namespace.name }}
 data:
   SPRING_PROFILES_ACTIVE: {{ .Values.config.SPRING_PROFILES_ACTIVE | quote }}
+  SPRING_DATASOURCE_URI: { { .Values.database.uri | quote } }
+  KAFKA_BOOTSTRAP_SERVERS: { { .Values.config.bootstrapServers | quote } }
+  KAFKA_SCHEMA_REGISTRY_URL: { { .Values.config.schemaRegistryUrl | quote } }
   LOG_LEVEL: {{ .Values.config.LOG_LEVEL | quote }}
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: {{ .Values.config.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT | quote }}
   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: {{ .Values.config.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT | quote }}

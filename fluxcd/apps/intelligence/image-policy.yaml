@@ -1,11 +1,11 @@
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImagePolicy
 metadata:
-  name: audit-policy
+  name: intelligence-policy
   namespace: flux-system
 spec:
   imageRepositoryRef:
-    name: audit
+    name: intelligence
 
   policy:
     semver:

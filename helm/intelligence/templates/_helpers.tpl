@@ -1,21 +1,21 @@
-{{- define "audit.name" -}}
-audit
+{{- define "intelligence.name" -}}
+intelligence
 {{- end }}
 
-{{- define "audit.fullname" -}}
-{{ include "audit.name" . }}
+{{- define "intelligence.fullname" -}}
+{{ include "intelligence.name" . }}
 {{- end }}
 
-{{- define "audit.serviceAccountName" -}}
+{{- define "intelligence.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-    {{- default (include "audit.fullname" .) .Values.serviceAccount.name }}
+    {{- default (include "intelligence.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
     {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
-{{- define "audit.labels" -}}
-app.kubernetes.io/name: audit
+{{- define "intelligence.labels" -}}
+app.kubernetes.io/name: intelligence
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}

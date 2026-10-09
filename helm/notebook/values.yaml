@@ -24,11 +24,16 @@ imagePullSecrets:
   email: "robert.rong@agile-solutions.ch"
 
 database:
+  uri: jdbc:postgresql://notebook-postgresql.database.svc.cluster.local:5432/notebook
   secret:
     create: true
     name: notebook-db
     username: notebook
     password: notebook
+
+kafka:
+  bootstrapServers: kafka.kafka-dev.svc.cluster.local:9093
+  schemaRegistryUrl: http://kafka.kafka-dev.svc.cluster.local:8081
 
 app:
   enabled: true
