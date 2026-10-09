@@ -6,6 +6,8 @@ import com.agilesolutions.intelligence.document.NotebookIntelligenceDocument.Sou
 import com.agilesolutions.intelligence.enrichment.NotebookEnrichmentService;
 import com.agilesolutions.intelligence.repository.NotebookIntelligenceRepository;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Service;
@@ -14,20 +16,17 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class NotebookIntelligenceProcessor {
 
     private final NotebookIntelligenceRepository repository;
     private final NotebookEnrichmentService enrichmentService;
 
-    public NotebookIntelligenceProcessor(
-            NotebookIntelligenceRepository repository,
-            NotebookEnrichmentService enrichmentService) {
-        this.repository = repository;
-        this.enrichmentService = enrichmentService;
-    }
-
     public void process(
             ConsumerRecord<String, GenericRecord> record) {
+
+        log.info("Processing notebook event: topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
         GenericRecord event = record.value();
 
@@ -36,7 +35,7 @@ public class NotebookIntelligenceProcessor {
                     "Notebook event value must not be null");
         }
 
-        String notebookId = requiredString(event, "id");
+        String notebookId = requiredString(event, "notebookId");
         String title = requiredString(event, "title");
         String description = optionalString(event, "description");
 
@@ -71,8 +70,12 @@ public class NotebookIntelligenceProcessor {
 
         document.setSource(source);
 
+        log.info("Enriching notebook intelligence document for notebookId={}", notebookId);
+
         enrichmentService.enrich(document);
         document.setEnrichedAt(Instant.now());
+
+        log.info("Saving notebook intelligence document for notebookId={}", notebookId);
 
         repository.save(document);
     }

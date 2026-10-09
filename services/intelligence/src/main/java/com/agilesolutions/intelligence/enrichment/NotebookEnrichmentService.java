@@ -2,6 +2,7 @@
 package com.agilesolutions.intelligence.enrichment;
 
 import com.agilesolutions.intelligence.document.NotebookIntelligenceDocument;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class NotebookEnrichmentService {
 
     private static final Map<String, List<String>> TOPIC_TERMS =
@@ -38,6 +40,9 @@ public class NotebookEnrichmentService {
             );
 
     public void enrich(NotebookIntelligenceDocument document) {
+
+        log.info("Enriching notebook intelligence document: notebookId={}", document.getNotebookId());
+
         String text = (
                 nullToEmpty(document.getTitle()) + " " +
                         nullToEmpty(document.getDescription())

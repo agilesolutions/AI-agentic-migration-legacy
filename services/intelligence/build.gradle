@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.agilesolutions.notebook'
-version = '1.0.0'
+version = '1.0.8'
 
 java {
 	toolchain {
@@ -42,11 +42,6 @@ dependencies {
 	implementation libs.avro
 	implementation libs.kafka.avro.serializer
 
-	// Database
-	implementation libs.spring.data.jdbc
-	implementation libs.spring.flyway
-	implementation libs.flyway.pg
-	implementation libs.postgresql.runtime
 
 	// Lombok
 	implementation libs.lombok
