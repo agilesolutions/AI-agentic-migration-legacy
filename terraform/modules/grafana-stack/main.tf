@@ -72,6 +72,12 @@ resource "helm_release" "lgtm_stack" {
         enabled = false
       }
 
+      # CORRECT UMBRELLA SPECS: Keep this clean. The chart will build the
+      # cluster collector pipelines automatically.
+      collectors = {
+        enabled = true
+      }
+
       grafana = {
         adminPassword = var.grafana_admin_password
 
