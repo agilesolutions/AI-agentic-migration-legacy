@@ -1,6 +1,6 @@
 # Copilot Agents en Skills om Overheid transitie te ondersteunen
 Diverse organisaties zijn momenteel druk bezig met het faceliften van legacy applicaties naar de laatste stand van technology (JDK, Spring framework en boot) en de move 
-van bare-metal RHEL VMs naar Kubernetet. Het lijkt het mij wenselijk het proces te versnellen door het inzetten van AI assisted software engineering ([Intellij Copilot](https://dev.to/eddybenchek/what-i-learned-building-with-github-copilot-as-a-java-developer-9bk)).
+van bare-metal RHEL VMs naar Kubernetes. Het lijkt het mij wenselijk het proces te versnellen door het inzetten van AI assisted software engineering ([Intellij Copilot](https://dev.to/eddybenchek/what-i-learned-building-with-github-copilot-as-a-java-developer-9bk)).
 Dit versnelt niet alleen het proces maar verbetert ook de kwaliteit van het eind product. Dit project bevat custom AI Copilot Agents en Skills ter ondersteuning van [Modernisering Legacy Systemen](#modernisering-legacy-systemen)
 
 ## Verwarring omtrent de move naar Azure in relatie tot NIS2 richtlijnen
