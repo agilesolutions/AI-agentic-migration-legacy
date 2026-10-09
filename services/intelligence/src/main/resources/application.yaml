@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: intelligence-service
+
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/notebook_intelligence}
+      auto-index-creation: true
+
+  kafka:
+    bootstrap-servers: kafka.kafka-dev.svc.cluster.local:9093
+
+    consumer:
+      group-id: intelligence-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: http://kafka.kafka-dev.svc.cluster.local:8081
+        specific.avro.reader: true
+    listener:
+      ack-mode: record
+
+app:
+  kafka:
+    topics:
+      notebook-events: notebook.events
+
+logging:
+  level:
+    com.agilesolutions.audit: INFO
+    org.apache.kafka: WARN

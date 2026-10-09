@@ -1,4 +1,4 @@
-package com.agilesolutions.notification.config;
+package com.agilesolutions.intelligence.config;
 
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
