@@ -94,17 +94,24 @@ public class NotebookIntelligenceProcessor {
         return value;
     }
 
-    private String optionalString(
-            GenericRecord record,
-            String field) {
+    public String optionalString(GenericRecord record, String fieldName) {
+        // 1. Guard check: Verify if the field exists anywhere in the schema definition
+        if (record.getSchema().getField(fieldName) == null) {
+            return null; // Gracefully return null if the field name doesn't match
+        }
 
-        Object value = record.get(field);
-
-        return value == null ? null : value.toString();
+        // 2. Safe to fetch now without throwing AvroRuntimeException
+        Object value = record.get(fieldName);
+        return value != null ? value.toString() : null;
     }
+
+
 
     private int readSchemaVersion(GenericRecord record) {
         String version = optionalString(record, "schemaVersion");
+
+        if (version == null) version = optionalString(record, "schema_version");
+        if (version == null) version = optionalString(record, "version");
 
         if (version == null) {
             return 1;

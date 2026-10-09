@@ -1,6 +1,6 @@
 spring:
   mongodb:
-    uri: mongodb://${MONGODB_USERNAME:intelligence}:${MONGODB_PASSWORD:intelligence}@${MONGODB_HOST:mongodb.database.svc.cluster.local}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:notebook_intelligence}?authSource=admin
+    uri: mongodb://${MONGODB_USERNAME:intelligence}:${MONGODB_PASSWORD:intelligence}@${MONGODB_HOST:mongodb.database.svc.cluster.local}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:notebook_intelligence}
     auto-index-creation: true
 
   application:
