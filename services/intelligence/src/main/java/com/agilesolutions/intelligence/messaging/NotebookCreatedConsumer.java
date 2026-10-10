@@ -24,6 +24,10 @@ public class NotebookCreatedConsumer {
     public void consume(
             ConsumerRecord<String, GenericRecord> record) {
 
-        processor.process(record);
+        processor.process(
+                record.value().get("notebookId").toString(),
+                record.value().get("title").toString(),
+                record.value().get("description").toString()
+        );
     }
 }

@@ -116,6 +116,11 @@ The application is also configured to send events over Redpanda as Kafka broker 
                                                Audit store
 ```
 
+## Extending the Use Case with AI Intelligence
+Notebook Intelligence Service consumes kafka events, enriches the content using AI (Spring AI + Embabel) and stores the enriched content in MongoDB using a flexible NoSQL document model.
+
+<img title="Architecture" alt="Alt text" src="/docs/use-case.png" width="800">
+
 ## Terraform provision LGTM grafana stack, PostgreSQL database, traefik ingress controller
 
 ```
