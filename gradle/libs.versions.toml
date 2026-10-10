@@ -9,6 +9,8 @@ h2 = "2.1.214"
 avro = "1.12.1"
 kafka-avro-serializer = "8.3.2"
 avro-gradle-plugin = "1.9.1"
+spring-ai = "2.0.0"
+embabel = "2.0.0-SNAPSHOT"
 
 [libraries]
 spring-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
@@ -39,6 +41,11 @@ spring-kafka-test = { module = "org.springframework.kafka:spring-kafka-test", ve
 spring-otlp = { module = "org.springframework.boot:spring-boot-starter-opentelemetry", version.ref = "springBoot" }
 otlp-appender = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0", version = "2.21.0-alpha" }
 
+# Spring AI
+spring-ai-bom = { module = "org.springframework.ai:spring-ai-bom", version.ref = "spring-ai" }
+spring-ai-starter-model-openai = { module = "org.springframework.ai:spring-ai-starter-model-openai" }
+
+
 
 spring-otlp-test = { module = "org.springframework.boot:spring-boot-starter-opentelemetry-test", version.ref = "springBoot" }
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
@@ -50,6 +57,10 @@ spring-test-containers = { module = "org.springframework.boot:spring-boot-testco
 jupiter-test-containers = { module = "org.testcontainers:junit-jupiter", version.ref = "testContainers" }
 postgresql-test-containers = { module = "org.testcontainers:postgresql", version.ref = "testContainers" }
 keycloak-test-containers = { module = "com.github.dasniko:testcontainers-keycloak", version = "4.2.1" }
+
+# Embabel Agent Framework
+embabel-agent-starter = { module = "com.embabel.agent:embabel-agent-starter", version.ref = "embabel" }
+embabel-agent-test = { module = "com.embabel.agent:embabel-agent-test", version.ref = "embabel" }
 
 # Test and migration libraries
 h2 = { module = "com.h2database:h2", version.ref = "h2" }

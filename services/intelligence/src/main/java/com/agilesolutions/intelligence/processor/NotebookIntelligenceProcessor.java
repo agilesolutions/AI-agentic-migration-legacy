@@ -1,126 +1,58 @@
 
 package com.agilesolutions.intelligence.processor;
 
+import com.agilesolutions.intelligence.domain.NotebookEnrichmentResult;
 import com.agilesolutions.intelligence.document.NotebookIntelligenceDocument;
-import com.agilesolutions.intelligence.document.NotebookIntelligenceDocument.SourceEvent;
-import com.agilesolutions.intelligence.enrichment.NotebookEnrichmentService;
 import com.agilesolutions.intelligence.repository.NotebookIntelligenceRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+import com.agilesolutions.intelligence.service.NotebookAiEnrichmentService;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.UUID;
-
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class NotebookIntelligenceProcessor {
 
+    private final NotebookAiEnrichmentService aiEnrichmentService;
     private final NotebookIntelligenceRepository repository;
-    private final NotebookEnrichmentService enrichmentService;
+
+    public NotebookIntelligenceProcessor(
+            NotebookAiEnrichmentService aiEnrichmentService,
+            NotebookIntelligenceRepository repository) {
+        this.aiEnrichmentService = aiEnrichmentService;
+        this.repository = repository;
+    }
 
     public void process(
-            ConsumerRecord<String, GenericRecord> record) {
+            String notebookId,
+            String title,
+            String description) {
 
-        log.info("Processing notebook event: topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
+        // Generate a genuine AI summary, topics, keywords and entities.
+        NotebookEnrichmentResult enrichment =
+                aiEnrichmentService.enrich(title, description);
 
-        GenericRecord event = record.value();
-
-        if (event == null) {
-            throw new IllegalArgumentException(
-                    "Notebook event value must not be null");
-        }
-
-        String notebookId = requiredString(event, "notebookId");
-        String title = requiredString(event, "title");
-        String description = optionalString(event, "description");
-
-        // Validate the ID early so malformed events can be routed
-        // through the Kafka error-handling policy.
-        UUID.fromString(notebookId);
-
-        Instant now = Instant.now();
-
+        // Preserve the source notebook ID; the LLM must not generate it.
         NotebookIntelligenceDocument document =
-                repository.findById(notebookId)
-                        .orElseGet(NotebookIntelligenceDocument::new);
-
-        boolean isNew = document.getCreatedAt() == null;
+                new NotebookIntelligenceDocument();
 
         document.setNotebookId(notebookId);
         document.setTitle(title);
         document.setDescription(description);
-        document.setUpdatedAt(now);
+        document.setSummary(enrichment.summary());
+        document.setTopics(enrichment.topics());
+        document.setKeywords(enrichment.keywords());
 
-        if (isNew) {
-            document.setCreatedAt(now);
-        }
+        document.setEntities(
+                enrichment.entities().stream()
+                        .map(entity -> {
+                            var extracted = new NotebookIntelligenceDocument
+                                    .ExtractedEntity();
+                            extracted.setName(entity.name());
+                            extracted.setType(entity.type());
+                            return extracted;
+                        })
+                        .toList());
 
-        SourceEvent source = new SourceEvent();
-        source.setEventId(optionalString(event, "eventId"));
-        source.setEventType("NotebookCreated");
-        source.setTopic(record.topic());
-        source.setPartition(record.partition());
-        source.setOffset(record.offset());
-        source.setSchemaVersion(readSchemaVersion(event));
-
-        document.setSource(source);
-
-        log.info("Enriching notebook intelligence document for notebookId={}", notebookId);
-
-        enrichmentService.enrich(document);
-        document.setEnrichedAt(Instant.now());
-
-        log.info("Saving notebook intelligence document for notebookId={}", notebookId);
+        document.setStatus("COMPLETED");
 
         repository.save(document);
-    }
-
-    private String requiredString(
-            GenericRecord record,
-            String field) {
-
-        String value = optionalString(record, field);
-
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Required Avro field is missing: " + field);
-        }
-
-        return value;
-    }
-
-    public String optionalString(GenericRecord record, String fieldName) {
-        // 1. Guard check: Verify if the field exists anywhere in the schema definition
-        if (record.getSchema().getField(fieldName) == null) {
-            return null; // Gracefully return null if the field name doesn't match
-        }
-
-        // 2. Safe to fetch now without throwing AvroRuntimeException
-        Object value = record.get(fieldName);
-        return value != null ? value.toString() : null;
-    }
-
-
-
-    private int readSchemaVersion(GenericRecord record) {
-        String version = optionalString(record, "schemaVersion");
-
-        if (version == null) version = optionalString(record, "schema_version");
-        if (version == null) version = optionalString(record, "version");
-
-        if (version == null) {
-            return 1;
-        }
-
-        try {
-            return Integer.parseInt(version);
-        } catch (NumberFormatException exception) {
-            return 1;
-        }
     }
 }

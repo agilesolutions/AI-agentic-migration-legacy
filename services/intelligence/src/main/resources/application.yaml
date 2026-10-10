@@ -1,4 +1,13 @@
 spring:
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: ${SPRING_AI_OPENAI_CHAT_MODEL:gpt-4.1-mini}
+          temperature: 0.1
+
   mongodb:
     uri: mongodb://${MONGODB_USERNAME:intelligence}:${MONGODB_PASSWORD:intelligence}@${MONGODB_HOST:mongodb.database.svc.cluster.local}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:notebook_intelligence}
     auto-index-creation: true

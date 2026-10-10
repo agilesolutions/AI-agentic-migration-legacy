@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-
+	implementation platform(libs.spring.ai.bom)
 	// Shared generated Avro events
 	implementation project(':common')
 
@@ -51,10 +51,15 @@ dependencies {
 	implementation libs.otlp.appender
 	implementation libs.spring.otlp
 
+	// OpenAI
+	implementation libs.spring.ai.starter.model.openai
+	implementation libs.embabel.agent.starter
+
 	// Tests
 	testImplementation libs.spring.otlp.test
 	testImplementation libs.spring.boot.test
 	testImplementation libs.spring.kafka.test
+	testImplementation libs.embabel.agent.test
 }
 
 String commit() {
