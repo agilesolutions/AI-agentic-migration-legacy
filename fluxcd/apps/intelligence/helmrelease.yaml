@@ -1,0 +1,26 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: intelligence
+  namespace: intelligence
+spec:
+  interval: 1m
+  install:
+    createNamespace: true
+  chart:
+    spec:
+      chart: ./helm/intelligence
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  values:
+    image:
+      repository: agilesolutions/intelligence
+      tag: 1.0.0
+    service:
+      port: 8080
+    ingress:
+      enabled: true
+      className: traefik
+      host: intelligence.local

@@ -28,8 +28,7 @@ public class NotebookController
 
 
     @Override
-    public ResponseEntity<List<Notebook>>
-    getAllNotebooks() {
+    public ResponseEntity<List<Notebook>> getAllNotebooks() {
 
         return ResponseEntity.ok(
                 notebookService.getAllNotebooks()

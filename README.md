@@ -147,6 +147,17 @@ kubectl port-forward svc/notebook 8080:8080 -n services
 http://localhost:8080/swagger-ui.html
 ```
 
+## Observe MongoDB document changes with MongoDB Compass
+
+``` 
+kubectl get pods -n database
+
+kubectl port-forward svc/mongodb 27017:27017 -n database
+
+# connect to MongoDB Compass with the following connection string:
+mongodb://localhost:27017
+
+```
 
 ## Grafana observe
 

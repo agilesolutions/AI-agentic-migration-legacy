@@ -5,6 +5,8 @@ include ':notification-service'
 project(':notification-service').projectDir = new File(settingsDir, 'services/notification')
 include ':audit-service'
 project(':audit-service').projectDir = new File(settingsDir, 'services/audit')
+include ':intelligence-service'
+project(':intelligence-service').projectDir = new File(settingsDir, 'services/intelligence')
 include ':common'
 project(':common').projectDir = new File(settingsDir, 'services/common')
 

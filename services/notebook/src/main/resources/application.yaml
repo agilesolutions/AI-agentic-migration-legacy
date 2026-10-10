@@ -4,7 +4,7 @@ spring:
     name: notebook
 
   datasource:
-    url: jdbc:postgresql://notebook-postgresql.database.svc.cluster.local:5432/notebook
+    url: ${SPRING_DATASOURCE_URI:jdbc:postgresql://notebook-postgresql.database.svc.cluster.local:5432/notebook}
     username: ${SPRING_DATASOURCE_USERNAME:notebook}
     password: ${SPRING_DATASOURCE_PASSWORD:notebook}
     driver-class-name: org.postgresql.Driver
@@ -28,10 +28,10 @@ spring:
     validate-on-migrate: true
 
   kafka:
-    bootstrap-servers: kafka.kafka-dev.svc.cluster.local:9093
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka.kafka-dev.svc.cluster.local:9093}
 
     properties:
-      schema.registry.url: http://kafka.kafka-dev.svc.cluster.local:8081
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL:http://kafka.kafka-dev.svc.cluster.local:8081}
 
 app:
   kafka:

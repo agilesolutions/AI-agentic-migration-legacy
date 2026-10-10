@@ -14,6 +14,8 @@ servers:
 tags:
   - name: Notebooks
     description: Notebook management operations
+  - name: NotebookIntelligence
+    description: Search and retrieve MongoDB-enriched notebook information
 paths:
   /api/v1/notebooks:
     get:
@@ -115,6 +117,91 @@ paths:
           description: Notebook successfully deleted
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/intelligence/notebooks:
+    servers:
+      - url: http://localhost:8082
+        description: Local Notebook Intelligence Service
+
+    get:
+      tags:
+        - NotebookIntelligence
+      summary: Search enriched notebooks
+      description: >
+        Search notebook intelligence documents by title.
+        Omit q to return all enriched notebooks.
+      operationId: searchNotebookIntelligence
+      parameters:
+        - name: q
+          in: query
+          required: false
+          description: Case-insensitive title search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching enriched notebooks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotebookIntelligence'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/intelligence/notebooks/{id}:
+    servers:
+      - url: http://localhost:8082
+        description: Local Notebook Intelligence Service
+
+    get:
+      tags:
+        - NotebookIntelligence
+      summary: Get enriched notebook by ID
+      operationId: getNotebookIntelligenceById
+      parameters:
+        - $ref: '#/components/parameters/NotebookId'
+      responses:
+        '200':
+          description: Enriched notebook found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotebookIntelligence'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/intelligence/notebooks/topic/{topic}:
+    servers:
+      - url: http://localhost:8082
+        description: Local Notebook Intelligence Service
+
+    get:
+      tags:
+        - NotebookIntelligence
+      summary: Find enriched notebooks by topic
+      operationId: getNotebooksByTopic
+      parameters:
+        - name: topic
+          in: path
+          required: true
+          description: Topic to match, for example CLOUD NATIVE
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notebooks matching the topic
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotebookIntelligence'
         '500':
           $ref: '#/components/responses/InternalServerError'
 components:
@@ -221,6 +308,92 @@ components:
         traceId:
           type: string
           description: Distributed tracing identifier
+
+    NotebookIntelligence:
+      type: object
+      required:
+        - notebookId
+        - title
+        - status
+        - topics
+        - keywords
+        - entities
+        - createdAt
+        - updatedAt
+      properties:
+        notebookId:
+          type: string
+          format: uuid
+          description: ID of the original PostgreSQL notebook
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: [string, 'null']
+          maxLength: 5000
+        status:
+          type: string
+          description: Enrichment processing status
+          enum:
+            - PENDING
+            - PROCESSING
+            - COMPLETED
+            - FAILED
+        topics:
+          type: array
+          items:
+            type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtractedEntity'
+        summary:
+          type: [string, 'null']
+        source:
+          $ref: '#/components/schemas/IntelligenceSourceEvent'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        enrichedAt:
+          type: [string, 'null']
+          format: date-time
+
+    ExtractedEntity:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+
+    IntelligenceSourceEvent:
+      type: object
+      properties:
+        eventId:
+          type: [string, 'null']
+        eventType:
+          type: string
+        topic:
+          type: string
+        partition:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        schemaVersion:
+          type: integer
+          format: int32
   responses:
     BadRequest:
       description: Invalid request

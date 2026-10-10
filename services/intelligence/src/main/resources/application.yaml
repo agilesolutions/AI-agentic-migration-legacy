@@ -1,0 +1,33 @@
+spring:
+  mongodb:
+    uri: mongodb://${MONGODB_USERNAME:intelligence}:${MONGODB_PASSWORD:intelligence}@${MONGODB_HOST:mongodb.database.svc.cluster.local}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:notebook_intelligence}
+    auto-index-creation: true
+
+  application:
+    name: intelligence-service
+
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka.kafka-dev.svc.cluster.local:9093}
+    consumer:
+      group-id: intelligence-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        # ⚠️ CRITICAL: Use brackets and quotes so Spring treats this as a flat key, not a nested object
+        "[schema.registry.url]": ${KAFKA_SCHEMA_REGISTRY_URL:http://kafka.kafka-dev.svc.cluster.local:8081}
+        "[specific.avro.reader]": "true"
+    listener:
+      ack-mode: record
+
+app:
+  kafka:
+    topics:
+      notebook-events: notebook.events
+
+logging:
+  level:
+    com.agilesolutions.intelligence: INFO
+    org.apache.kafka: WARN

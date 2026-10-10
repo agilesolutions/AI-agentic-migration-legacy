@@ -1,0 +1,64 @@
+replicaCount: 1
+
+namespace:
+  create: false
+  name: services
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: "intelligence"
+
+image:
+  repository: agilesolutions/intelligence
+  tag: 1.0.10
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  name: dockerhub-secret
+
+database:
+  host: mongodb.database.svc.cluster.local
+  name: notebook_intelligence
+  secret:
+    create: true
+    name: intelligence-db
+    username: intelligence
+    password: intelligence
+
+kafka:
+  bootstrapServers: kafka.kafka-dev.svc.cluster.local:9093
+  schemaRegistryUrl: http://kafka.kafka-dev.svc.cluster.local:8081
+
+app:
+  enabled: true
+
+service:
+#  type: ClusterIP
+# Docker Desktop will automatically bind that port to your Windows machine's localhost
+  type: LoadBalancer
+  port: 8080
+
+ingress:
+  enabled: false
+  className: traefik
+  host: intelligence.agilesolutions.com
+  clusterIssuer: letsencrypt-production
+  tlsSecretName: intelligence-tls
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+config:
+  SPRING_PROFILES_ACTIVE: kubernetes
+  LOG_LEVEL: INFO
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-node-collector-collector.monitoring.svc.cluster.local:4318/v1/traces
+  OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://otel-node-collector-collector.monitoring.svc.cluster.local:4318/v1/metrics
+  OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: http://otel-node-collector-collector.monitoring.svc.cluster.local:4318/v1/logs
+  OTEL_TRACES_SAMPLER_ARG: 1.0

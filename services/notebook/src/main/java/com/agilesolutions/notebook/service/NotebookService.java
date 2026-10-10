@@ -1,10 +1,10 @@
 package com.agilesolutions.notebook.service;
 
+import com.agilesolutions.common.exception.NotebookNotFoundException;
 import com.agilesolutions.notebook.api.model.CreateNotebookRequest;
 import com.agilesolutions.notebook.api.model.Notebook;
 import com.agilesolutions.notebook.api.model.UpdateNotebookRequest;
 import com.agilesolutions.notebook.entity.NotebookEntity;
-import com.agilesolutions.notebook.exception.NotebookNotFoundException;
 import com.agilesolutions.notebook.messaging.NotebookEventProducer;
 import com.agilesolutions.notebook.repository.NotebookRepository;
 

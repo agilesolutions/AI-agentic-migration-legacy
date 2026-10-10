@@ -33,6 +33,20 @@ module "postgresql" {
   storage_size  = "8Gi"
 }
 
+
+module "mongodb" {
+  source = "../../modules/mongodb"
+
+  namespace     = "database"
+  release_name  = "mongodb"
+  database      = "notebook_intelligence"
+  username      = "intelligence"
+  storage_size  = "2Gi"
+
+  root_password = var.mongodb_root_password
+  password      = var.mongodb_password
+}
+
 module "traefik" {
   source = "../../modules/traefik"
   namespace     = "traefik"
